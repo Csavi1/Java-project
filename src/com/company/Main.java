@@ -122,7 +122,7 @@ public class Main {
         Option rolled = wheel.get(GetRandom(0, 99));
         System.out.format("\n\nThe wheel stopped at %s.\n", rolled.color);
         if (currbet.equals(rolled.abr)) {
-            System.out.println("You have guessed it!");
+            System.out.format("You have guessed it! +%d\n", curramount * rolled.payout);
             currtokens += curramount * rolled.payout;
         }
         else
