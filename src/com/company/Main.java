@@ -33,7 +33,6 @@ public class Main {
     }
 
 
-
     private static void Ini(int tokens) {
         options = new ArrayList<Option>();
         options.add(new Option("Black", "f", 39, 2));
@@ -70,7 +69,6 @@ public class Main {
             LogTokens();
         }
     }
-
     private static void GetInput() {
         System.out.format("Choose: %s\n", str_options);
         Scanner reader = new Scanner(System.in);
@@ -111,12 +109,6 @@ public class Main {
         while(!valid);
         reader.nextLine();
         currtokens -= curramount;
-    }
-    private static int GetRandom(int min, int max) {
-        return (int) (Math.random() * (max - min + 1) + min);
-    }
-    private static void LogTokens() {
-        System.out.format("\nCurrent tokens: %d\n", currtokens);
     }
     private static void RollTheWheel() {
         Option rolled = wheel.get(GetRandom(0, 99));
@@ -163,5 +155,11 @@ public class Main {
         }
         else
             System.out.println("\nThanks for playing!\nYour total prize is " + currtokens + " tokens!");
+    }
+    private static void LogTokens() {
+        System.out.format("\nCurrent tokens: %d\n", currtokens);
+    }
+    private static int GetRandom(int min, int max) {
+        return (int) (Math.random() * (max - min + 1) + min);
     }
 }
