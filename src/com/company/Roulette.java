@@ -1,8 +1,6 @@
 package com.company;
 
-import java.sql.SQLOutput;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 class Option {
@@ -17,34 +15,44 @@ class Option {
         this.payout = payout;
     }
 }
-public class Main {
-    static List<Option> options;
-    static List<Option> wheel;
+
+public class Roulette {
+    static ArrayList<Option> options;
+    static ArrayList<Option> wheel;
+    static int count_sum = -1;
     static String str_options = "";
-    static int currtokens = 0;
-    static String currbet = "";
-    static int curramount = 0;
+    static int tokens = 0;
+    static String current_bet = "";
+    static int bet_amount = 0;
+
 
     public static void main(String[] args) {
-        Ini(100);
+        Ini();
         Welcome();
         GetInput();
         RollTheWheel();
     }
 
+    //    Adjust options in the wheel: add, remove or change
+    private static void Fill() {
+        tokens = 100;
 
-    private static void Ini(int tokens) {
-        options = new ArrayList<Option>();
         options.add(new Option("Black", "f", 39, 2));
         options.add(new Option("Red", "p", 39, 2));
         options.add(new Option("Blue", "k", 20, 5));
         options.add(new Option("Gold", "a", 2, 50));
+    }
 
-        wheel = new ArrayList<Option>();
+
+    private static void Ini() {
+        options = new ArrayList<>();
+        Fill();
+        wheel = new ArrayList<>();
         for (int i = 0; i < options.size(); i++) {
             Option li = options.get(i);
             for (int j = 0; j < li.count; j++) {
                 wheel.add(li);
+                count_sum++;
             }
 //            String str = String.format("%s(%s)", li.color, li.abr);
             String str = li.abr;
@@ -55,34 +63,27 @@ public class Main {
             else
                 str_options += str;
         }
-        currtokens = tokens;
-
     }
     private static void Welcome() {
         System.out.println("Welcome to Simple Java Roulette!\n");
         if (options != null) {
             System.out.println("Your options are:");
-            for (int i = 0; i < options.size(); i++) {
-                Option option = options.get(i);
-                System.out.format("\t%s(%s) %d%% - Payout: ×%d\n", option.color, option.abr, option.count,option.payout);
-            }
+            options.forEach(option -> System.out.format("\t%s(%s) %d%% - Payout: ×%d\n", option.color, option.abr, option.count, option.payout));
             LogTokens();
         }
     }
     private static void GetInput() {
         System.out.format("Choose: %s\n", str_options);
         Scanner reader = new Scanner(System.in);
-//        reader.useDelimiter(""); // To only read one character
 
         boolean valid = false;
         do {
             System.out.print("\tYour bet: ");
-            currbet = reader.next().toLowerCase();
-            for (int i = 0; i < options.size(); i++) {
-                Option option = options.get(i);
-                if (currbet.equals(option.abr) || currbet.equals(option.color)) {
+            current_bet = reader.next();
+            for (Option option : options) {
+                if (current_bet.equalsIgnoreCase(option.abr) || current_bet.equalsIgnoreCase(option.color)) {
                     valid = true;
-                    currbet = option.abr;
+                    current_bet = option.abr;
                     break;
                 }
             }
@@ -96,31 +97,31 @@ public class Main {
         do {
             System.out.print("\tBet amount: ");
             try {
-                curramount = reader.nextInt();
+                bet_amount = reader.nextInt();
             } catch (Exception e) {
                 reader.nextLine();
-                curramount = 0;
+                bet_amount = 0;
             }
-            if (curramount > 0 && currtokens - curramount >= 0)
+            if (bet_amount > 0 && tokens - bet_amount >= 0)
                 valid = true;
             if (!valid)
                 System.out.println("\tError, try again!");
         }
         while(!valid);
         reader.nextLine();
-        currtokens -= curramount;
+        tokens -= bet_amount;
     }
     private static void RollTheWheel() {
-        Option rolled = wheel.get(GetRandom(0, 99));
+        Option rolled = wheel.get(Roll(count_sum));
         System.out.format("\n\nThe wheel stopped at %s.\n", rolled.color);
-        if (currbet.equals(rolled.abr)) {
-            System.out.format("You have guessed it! +%d\n", curramount * rolled.payout);
-            currtokens += curramount * rolled.payout;
+        if (current_bet.equals(rolled.abr)) {
+            System.out.format("You have guessed it! +%d\n", bet_amount * rolled.payout);
+            tokens += bet_amount * rolled.payout;
         }
         else
             System.out.println("Better luck next time!");
 
-        if (currtokens > 0) {
+        if (tokens > 0) {
             LogTokens();
             Retry();
         }
@@ -134,12 +135,12 @@ public class Main {
         boolean valid = false;
         do {
             System.out.println("Continue playing?\n[Y]es / [N]o");
-            String str = reader.next().toLowerCase();
-            if (str.equals("y") || str.equals("yes")) {
+            String str = reader.next();
+            if (str.equalsIgnoreCase("y") || str.equalsIgnoreCase("yes")) {
                 valid = true;
                 retry = true;
             }
-            else if (str.equals("n") || str.equals("no")) {
+            else if (str.equalsIgnoreCase("n") || str.equalsIgnoreCase("no")) {
                 valid = true;
                 retry = false;
             }
@@ -154,12 +155,13 @@ public class Main {
             RollTheWheel();
         }
         else
-            System.out.println("\nThanks for playing!\nYour total prize is " + currtokens + " tokens!");
+            System.out.println("\nThanks for playing!\nYour total prize is " + tokens + " tokens!");
     }
     private static void LogTokens() {
-        System.out.format("\nCurrent tokens: %d\n", currtokens);
+        System.out.format("\nCurrent tokens: %d\n", tokens);
     }
-    private static int GetRandom(int min, int max) {
-        return (int) (Math.random() * (max - min + 1) + min);
+    private static int Roll(int wheel_count) {
+        int min = 0;
+        return (int) (Math.random() * (wheel_count - min + 1) + min);
     }
 }
