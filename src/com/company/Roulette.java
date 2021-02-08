@@ -102,7 +102,7 @@ public class Roulette {
                 reader.nextLine();
                 bet_amount = 0;
             }
-            if (bet_amount > 0 && tokens - bet_amount >= 0)
+            if (bet_amount > 0 && tokens >= bet_amount)
                 valid = true;
             if (!valid)
                 System.out.println("\tError, try again!");
@@ -115,7 +115,7 @@ public class Roulette {
         Option rolled = wheel.get(Roll(count_sum));
         System.out.format("\n\nThe wheel stopped at %s.\n", rolled.color);
         if (current_bet.equals(rolled.abr)) {
-            System.out.format("You have guessed it! +%d\n", bet_amount * rolled.payout);
+            System.out.format("You have guessed it! +%d\n", bet_amount * rolled.payout - bet_amount);
             tokens += bet_amount * rolled.payout;
         }
         else
