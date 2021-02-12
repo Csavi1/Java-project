@@ -162,6 +162,6 @@ public class Roulette {
     }
     private static int Roll(int wheel_count) {
         int min = 0;
-        return (int) (Math.random() * (wheel_count - min + 1) + min);
+        return (int) (Math.random() * (wheel_count - min + 1)) + min;
     }
 }
