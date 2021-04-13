@@ -53,6 +53,7 @@ public class Roulette {
     }
     private static void Welcome() {
         System.out.println("Welcome to Simple Java Roulette!\n");
+        LeaderBoard.Show();
         if (options != null) {
             System.out.println("Your options are:");
             options.forEach(option -> System.out.format("\t%s(%s) %d%% - Payout: ×%d\n", option.color, option.abr, option.count, option.payout));
@@ -141,8 +142,11 @@ public class Roulette {
             GetInput();
             RollTheWheel();
         }
-        else
+        else {
             System.out.println("\nThanks for playing!\nYour total prize is " + tokens + " tokens!");
+            System.out.println("Please enter your name!");
+            LeaderBoard.Save(reader.nextLine(), tokens);
+        }
     }
     private static void LogTokens() {
         System.out.format("\nCurrent tokens: %d\n", tokens);
