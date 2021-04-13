@@ -1,3 +1,6 @@
-Jeff:30
-Dan:180
-Many:190
+Cat:180
+Jeff:90
+Maja:60
+Pat:80
+Many:69
+Dani:99
