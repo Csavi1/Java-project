@@ -1,43 +1,53 @@
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 
 public class LeaderBoard {
-    private static LinkedHashMap<String, Integer> _leaderBoardItems;
+    private static ArrayList<Result> _leaderBoardItems;
     private static String _filePath = "leaderboard.txt";
     
     public static void Show() {
         if (_leaderBoardItems == null)
             _leaderBoardItems = ReadFile(_filePath);
 
-        if (_leaderBoardItems != null && _leaderBoardItems.entrySet().size() > 0) {
-            System.out.println("LeaderBoard");
-            for (String key : _leaderBoardItems.keySet()) {
-                System.out.format("* %s: %d\n", key, _leaderBoardItems.get(key));
+        if (_leaderBoardItems != null && _leaderBoardItems.size() > 0) {
+            System.out.println("Leaderboard (TOP 5)");
+            for (Result item : _leaderBoardItems) {
+                System.out.format("* %s: %d tokens\n", item.Name, item.Tokens);
             }
             System.out.println();
         }
     }
     public static void Save(String name, int result) {
-        if (_leaderBoardItems.containsKey(name) && _leaderBoardItems.get(name) > result) {
-            return;
+        Result newResult = new Result(name, result);
+        boolean inList = false;
+
+        for (int i = 0; i < _leaderBoardItems.size(); i++) {
+            Result item = _leaderBoardItems.get(i);
+            if (item.Name.equals(newResult.Name)) {
+                if (item.Tokens > newResult.Tokens) {
+                    return;
+                }
+                _leaderBoardItems.set(i, newResult);
+                inList = true;
+                break;
+            }
         }
-        _leaderBoardItems.put(name, result);
 
-        ArrayList<Integer> mapValueOrder = new ArrayList<>(_leaderBoardItems.values());
-        Collections.reverse(mapValueOrder);
+        if (!inList) {
+            _leaderBoardItems.add(new Result(name, result));
+        }
 
-        WriteFile(_filePath, mapValueOrder);
+        WriteFile(_filePath);
     }
-    private static LinkedHashMap<String, Integer> ReadFile(String filePath) {
-        LinkedHashMap<String, Integer> map = new LinkedHashMap<>();
+    private static ArrayList<Result> ReadFile(String filePath) {
+        ArrayList<Result> results = new ArrayList<>();
         try {
             BufferedReader reader = new BufferedReader(new FileReader(filePath));
             String line = reader.readLine();
             while (line != null) {
                 String[] data = line.split(":");
-                map.put(data[0], Integer.parseInt(data[1]));
+                results.add(new Result(data[0], Integer.parseInt(data[1])));
                 line = reader.readLine();
             }
             reader.close();
@@ -45,18 +55,18 @@ public class LeaderBoard {
         catch (IOException ex) {
             System.out.println("File not found!");
         }
-        return map;
+        return results;
     }
-    private static void WriteFile(String filePath, ArrayList<Integer> order) {
+    private static void WriteFile(String filePath) {
         try {
+            Collections.sort(_leaderBoardItems);
             BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
-            for (int itemValue : order) {
-                for (String itemKey : _leaderBoardItems.keySet()) {
-                    if (_leaderBoardItems.get(itemKey).equals(itemValue)) {
-                        writer.write(itemKey + ":" + itemValue + "\n");
-                        break;
-                    }
-                }
+            int i = 0;
+            for (Result item : _leaderBoardItems) {
+                writer.write(item.Name + ":" + item.Tokens + "\n");
+                i++;
+                if (i == 5)
+                    break;
             }
             writer.close();
         }

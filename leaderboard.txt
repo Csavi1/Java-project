@@ -1,6 +1,5 @@
 Cat:180
-Jeff:90
-Maja:60
-Pat:80
-Many:69
+John:180
+Sam:110
+Jeff:101
 Dani:99
