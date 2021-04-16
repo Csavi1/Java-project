@@ -1,5 +1,3 @@
-Cat:180
-John:180
-Sam:110
-Jeff:101
-Dani:99
+Dani:150
+Alma:50
+Valaki:10
